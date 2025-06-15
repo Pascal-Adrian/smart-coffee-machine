@@ -1,0 +1,70 @@
+@use '../../styles/scss/colors/button.scss';
+
+.button {
+  font-weight: 500;
+  width: 100%;
+  border-radius: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  &--primary {
+    background-color: button.$primary;
+    color: button.$primary-text;
+
+    &:active {
+      background-color: button.$primary-pressed;
+    }
+
+    &:disabled {
+      background-color: button.$primary;
+      color: button.$primary-text;
+    }
+  }
+
+  &--secondary {
+    background-color: button.$secondary;
+    color: button.$secondary-text;
+
+    &:active {
+      background-color: button.$secondary-pressed;
+    }
+
+    &:disabled {
+      background-color: button.$secondary;
+      color: button.$secondary-text;
+    }
+  }
+
+  &--disabled {
+    background-color: button.$disabled;
+    color: button.$disabled-text;
+    cursor: not-allowed;
+
+    &:active {
+      background-color: button.$disabled;
+    }
+  }
+
+  &--normal {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+
+  &--small {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  &__icon {
+    margin-right: 0.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  &__spinner {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}

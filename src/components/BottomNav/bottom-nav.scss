@@ -1,0 +1,28 @@
+@use '../../styles/scss/colors/globals.scss';
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: globals.$background;
+  border-radius: 1.25rem;
+  padding: 0.75rem 0.5rem;
+
+  & > ul {
+    display: flex;
+    align-items: center;
+
+    & > li {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  &__button {
+    width: min-content;
+    padding: 1rem;
+  }
+}

@@ -1,0 +1,43 @@
+@use '../../styles/scss/colors/globals.scss';
+
+.coffee-machine-card {
+  background-color: globals.$background;
+  padding: 0.625rem 1rem;
+  border-radius: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &-button {
+      margin-left: auto;
+    }
+  }
+
+  &__body {
+    border-radius: 1.25rem;
+    background-color: globals.$background-light;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+
+    & > img {
+      height: 7.5rem;
+      width: 100%;
+    }
+  }
+
+  &__statuses {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+    padding: 0.25rem 1.25rem;
+  }
+}
