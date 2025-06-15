@@ -21,6 +21,18 @@ const Overlay: React.FC<OverlayProps> = ({
     setState(open);
   }, [open]);
 
+  useEffect(() => {
+    if (state) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [state]);
+
   const handleClose = () => {
     if (closable && onClose) {
       onClose();

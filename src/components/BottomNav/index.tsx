@@ -7,9 +7,13 @@ import './bottom-nav.scss';
 
 export interface BottomNavProps {
   connected?: boolean;
+  onClick?: () => void;
 }
 
-const BottomNav: React.FC<BottomNavProps> = ({ connected = false }) => {
+const BottomNav: React.FC<BottomNavProps> = ({
+  connected = false,
+  onClick = () => {},
+}) => {
   return (
     <nav className='bottom-nav'>
       <ul>
@@ -20,7 +24,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ connected = false }) => {
         </li>
         {connected && (
           <li>
-            <Button className='bottom-nav__button'>
+            <Button className='bottom-nav__button' onClick={onClick}>
               <CupIcon />
             </Button>
           </li>

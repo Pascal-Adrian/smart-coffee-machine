@@ -58,7 +58,7 @@ const CoffeeMachine: React.FC = () => {
     },
     cup: {
       suffix: 'cups',
-      text: 'cups',
+      text: 'made today',
     },
   };
 

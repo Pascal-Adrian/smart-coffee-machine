@@ -42,6 +42,11 @@
     color: button.$disabled-text;
     cursor: not-allowed;
 
+    &:disabled {
+      background-color: button.$disabled;
+      color: button.$disabled-text;
+    }
+
     &:active {
       background-color: button.$disabled;
     }

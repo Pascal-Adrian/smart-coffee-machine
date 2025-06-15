@@ -1,15 +1,24 @@
+import { useState } from 'react';
 import BottomNav from '../BottomNav';
-import Overlay from '../Overlay';
+import CoffeeOverlay from '../CoffeeOverlay.tsx';
 import './page-base.scss';
 
 const PageBase: React.FC<React.PropsWithChildren> = ({ children }) => {
+  const [overlay, setOverlay] = useState(false);
+
+  const openOverlay = () => {
+    setOverlay(true);
+  };
+
+  const closeOverlay = () => {
+    setOverlay(false);
+  };
+
   return (
     <div className='page-base'>
-      {children}
-      <BottomNav connected={true} />
-      <Overlay>
-        <h1>Some content</h1>
-      </Overlay>
+      <div className='page-base__wrapper'>{children}</div>
+      <BottomNav connected={true} onClick={openOverlay} />
+      <CoffeeOverlay open={overlay} onClose={closeOverlay} />
     </div>
   );
 };
