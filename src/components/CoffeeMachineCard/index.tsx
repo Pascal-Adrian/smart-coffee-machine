@@ -8,34 +8,21 @@ import CupIcon from '../../assets/icons/16px/Cup.svg?react';
 import './coffee-machine-card.scss';
 import State from '../State';
 import { useNavigate } from 'react-router';
+import { useSelector } from 'react-redux';
+import { selectMachine } from '../../store/machineSlice';
 
 const CoffeMachineCard: React.FC = () => {
-  const { name, image, statuses } = {
-    name: 'Caffe Corso',
-    image: 'assets/images/coffee_machine.png',
-    statuses: {
-      water: {
-        status: 'perfect',
-      },
-      beans: {
-        status: 'perfect',
-      },
-      cleaning: {
-        status: 'perfect',
-      },
-      cup: {
-        status: 'perfect',
-      },
-    },
-  };
+  const machine = useSelector(selectMachine);
 
   const navigate = useNavigate();
 
   return (
     <section className='coffee-machine-card'>
       <div className='coffee-machine-card__header'>
-        <h2>{name}</h2>
-        <Label>Ready</Label>
+        <h2>{machine.device_name}</h2>
+        <Label type={machine.is_powered_on ? 'success' : 'warning'}>
+          {machine.is_powered_on ? 'Ready' : 'Not Ready'}
+        </Label>
         <IconButton
           icon={<ChevronRight />}
           variant={'transparent'}
@@ -44,17 +31,25 @@ const CoffeMachineCard: React.FC = () => {
         />
       </div>
       <div className='coffee-machine-card__body'>
-        <img src={image} alt={name} />
-        <div className='coffee-machine-card__statuses'>
-          {/* @ts-expect-error - Water status is hardcoded temporarily */}
-          <State type={statuses.water.status} icon={<WaterIcon />} />
-          {/* @ts-expect-error - Beans status is hardcoded temporarily */}
-          <State type={statuses.beans.status} icon={<BeanIcon />} />
-          {/* @ts-expect-error - Cleaning status is hardcoded temporarily */}
-          <State type={statuses.cleaning.status} icon={<CleanIcon />} />
-          {/* @ts-expect-error - Cup status is hardcoded temporarily */}
-          <State type={statuses.cup.status} icon={<CupIcon />} />
-        </div>
+        <img
+          src={'assets/images/coffee_machine.png'}
+          alt={machine.device_name}
+        />
+        {machine.statuses && (
+          <div className='coffee-machine-card__statuses'>
+            {/* @ts-expect-error - Water status is hardcoded temporarily */}
+            <State type={machine.statuses?.water.status} icon={<WaterIcon />} />
+            {/* @ts-expect-error - Beans status is hardcoded temporarily */}
+            <State type={machine.statuses?.beans.status} icon={<BeanIcon />} />
+            {/* @ts-expect-error - Cleaning status is hardcoded temporarily */}
+            <State
+              type={machine.statuses?.cleaning.status}
+              icon={<CleanIcon />}
+            />
+            {/* @ts-expect-error - Cup status is hardcoded temporarily */}
+            <State type={machine.statuses?.cups.status} icon={<CupIcon />} />
+          </div>
+        )}
       </div>
     </section>
   );

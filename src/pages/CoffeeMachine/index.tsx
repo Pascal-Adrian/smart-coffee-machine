@@ -10,37 +10,34 @@ import CleanIcon from '../../assets/icons/24px/Clean.svg?react';
 import iconsMap, { type IconType } from '../../utils/iconsMap';
 import './coffee-machine.scss';
 import { useNavigate } from 'react-router';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { selectMachine, togglePowerState } from '../../store/machineSlice';
+import instance from '../../api/config';
 
 const CoffeeMachine: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const machine = useAppSelector(selectMachine);
 
-  const { name, image, state, ready, statistics } = {
-    name: 'Caffe Corso',
-    image: 'assets/images/coffee_machine.png',
-    ready: true,
-    state: {
-      water: {
-        status: 'perfect',
-        number: 50,
-      },
-      beans: {
-        status: 'perfect',
-        number: 50,
-      },
-      cup: {
-        status: 'perfect',
-        number: 4,
-      },
-      cleaning: {
-        status: 'perfect',
-        number: 50,
-      },
-    },
-    statistics: {
-      coffees: 100,
-      time_in_use: 94,
-      cleaned: 4,
-    },
+  const rinseCall = async () => {
+    try {
+      await instance.post(`commands/coffee/cleaning`);
+      dispatch(togglePowerState());
+      setTimeout(() => {
+        dispatch(togglePowerState());
+      }, 30000);
+    } catch (error) {
+      console.error('Error sending rinse command:', error);
+    }
+  };
+
+  const sleepCall = async () => {
+    try {
+      await instance.post(`commands/coffee/power_toggle`);
+      dispatch(togglePowerState());
+    } catch (error) {
+      console.error('Error sending sleep command:', error);
+    }
   };
 
   const stateTextMap = {
@@ -56,24 +53,9 @@ const CoffeeMachine: React.FC = () => {
       suffix: 'days',
       text: 'cleaning',
     },
-    cup: {
+    cups: {
       suffix: 'cups',
       text: 'made today',
-    },
-  };
-
-  const statisticsTextMap = {
-    coffees: {
-      suffix: 'cups',
-      text: 'Made coffee',
-    },
-    time_in_use: {
-      suffix: 'days',
-      text: 'Time in use',
-    },
-    cleaned: {
-      suffix: 'times',
-      text: 'Cleaned',
     },
   };
 
@@ -85,27 +67,43 @@ const CoffeeMachine: React.FC = () => {
           variant='white'
           onClick={() => navigate(-1)}
         />
-        <h1>{name}</h1>
+        <h1>{machine.device_name}</h1>
         <IconButton icon={<HelpIcon />} variant='white' />
       </header>
       <section className='coffee-machine__main-section'>
         <div className='coffee-machine__image'>
-          <img src={image} alt={name} />
-          <Label type={ready ? 'success' : 'warning'}>
-            {ready ? 'Ready' : 'Not Ready'}
+          <img
+            src={'assets/images/coffee_machine.png'}
+            alt={machine.device_name}
+          />
+          <Label type={machine.is_powered_on ? 'success' : 'warning'}>
+            {machine.is_powered_on ? 'Ready' : 'Not Ready'}
           </Label>
         </div>
         <div className='coffee-machine__controls'>
           <div>
-            <IconButton icon={<RinseIcon />} variant='white' />
+            <IconButton
+              icon={<RinseIcon />}
+              variant='white'
+              onClick={rinseCall}
+              disabled={!machine.is_powered_on}
+            />
             <label>Rinse</label>
           </div>
           <div>
-            <IconButton icon={<SleepIcon />} variant='white' />
+            <IconButton
+              icon={<SleepIcon />}
+              variant='white'
+              onClick={sleepCall}
+            />
             <label>Sleep</label>
           </div>
           <div>
-            <IconButton icon={<CleanIcon />} variant='white' />
+            <IconButton
+              icon={<CleanIcon />}
+              variant='white'
+              disabled={!machine.is_powered_on}
+            />
             <label>Clean</label>
           </div>
         </div>
@@ -113,42 +111,41 @@ const CoffeeMachine: React.FC = () => {
       <section className='coffee-machine__summary'>
         <h3>Summary</h3>
         <div className='coffee-machine__summary-cards'>
-          {Object.entries(state).map(([key, value]) => (
-            <div key={key} className='coffee-machine__summary-card'>
-              <State
-                type={value.status as StateType}
-                icon={iconsMap[key as IconType]}
-              />
-              <div>
-                <h4>
-                  {value.number}{' '}
-                  {stateTextMap[key as keyof typeof stateTextMap].suffix}
-                </h4>
-                <span>
-                  {stateTextMap[key as keyof typeof stateTextMap].text}
-                </span>
+          {machine.statuses &&
+            Object.entries(machine.statuses).map(([key, value]) => (
+              <div key={key} className='coffee-machine__summary-card'>
+                <State
+                  type={value.status as StateType}
+                  icon={iconsMap[key as IconType]}
+                />
+                <div>
+                  <h4>
+                    {value.value}{' '}
+                    {stateTextMap[key as keyof typeof stateTextMap].suffix}
+                  </h4>
+                  <span>
+                    {stateTextMap[key as keyof typeof stateTextMap].text}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </section>
       <section className='coffee-machine__statistics'>
         <h3>Statistics</h3>
         <ul className='coffee-machine__statistics-list'>
-          {Object.entries(statistics).map(([key, value]) => (
-            <li key={key}>
-              <h4>
-                {statisticsTextMap[key as keyof typeof statisticsTextMap].text}
-              </h4>
-              <span>
-                {value}{' '}
-                {
-                  statisticsTextMap[key as keyof typeof statisticsTextMap]
-                    .suffix
-                }
-              </span>
-            </li>
-          ))}
+          <li>
+            <h4>Made coffee</h4>
+            <span>{machine.number_of_coffee} cups</span>
+          </li>
+          <li>
+            <h4>Time in use</h4>
+            <span>{machine.total_active_time} minutes</span>
+          </li>
+          <li>
+            <h4>Cleaned</h4>
+            <span>{machine.statuses?.cleaning.value} days ago</span>
+          </li>
         </ul>
       </section>
     </PageBase>

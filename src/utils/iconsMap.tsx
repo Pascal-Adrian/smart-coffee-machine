@@ -7,7 +7,7 @@ const iconsMap = {
   water: <WaterIcon />,
   beans: <BeanIcon />,
   cleaning: <CleanIcon />,
-  cup: <CupIcon />,
+  cups: <CupIcon />,
 };
 
 export type IconType = keyof typeof iconsMap;

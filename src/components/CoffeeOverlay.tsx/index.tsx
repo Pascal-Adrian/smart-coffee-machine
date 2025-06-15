@@ -4,6 +4,7 @@ import './coffee-overlay.scss';
 import Loading from './components/Loading';
 import CoffeeList from './components/CoffeeList';
 import type { Coffee } from '../../types';
+import instance from '../../api/config';
 
 export interface CoffeeOverlayProps {
   open: boolean;
@@ -13,8 +14,14 @@ export interface CoffeeOverlayProps {
 const CoffeeOverlay: React.FC<CoffeeOverlayProps> = ({ open, onClose }) => {
   const [preparing, setPreparing] = useState<Coffee | null>(null);
 
-  const handleClick = (coffee: Coffee) => {
+  const handleClick = async (coffee: Coffee) => {
     setPreparing(coffee);
+    try {
+      await instance.post(`commands/coffee/${coffee.type}`);
+    } catch (error) {
+      console.error('Error preparing coffee:', error);
+      setPreparing(null);
+    }
   };
 
   const handleStop = () => {
