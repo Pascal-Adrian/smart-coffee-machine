@@ -56,13 +56,22 @@ const Home: React.FC = () => {
     }
   };
 
+  const updateMachineData = async () => {
+    try {
+      await instance.get(`/commands/coffee/read_sensors`);
+    } catch (error) {
+      console.error('Error updating machine data:', error);
+    }
+  };
+
   useEffect(() => {
     fetchUserDataClb();
   }, [fetchUserDataClb]);
 
-  const handleConnectClick = () => {
-    fetchMachineData();
-    fetchMachineStatistics();
+  const handleConnectClick = async () => {
+    await updateMachineData();
+    await fetchMachineData();
+    await fetchMachineStatistics();
   };
 
   return (
